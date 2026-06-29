@@ -43,10 +43,10 @@
     <main>
       <h1>Simple Quiz</h1>
       <p>Answer the 3 random multiple-choice questions below.</p>
-      <form id="quiz-form" aria-live="polite"></form>
+      <form id="quiz-form"></form>
       <button id="submit-btn" type="button">Submit</button>
       <button id="new-quiz-btn" type="button">New Random Quiz</button>
-      <p id="result"></p>
+      <p id="result" aria-live="polite"></p>
     </main>
 
     <script>
@@ -126,12 +126,15 @@
           legend.textContent = `${index + 1}. ${item.question}`;
           fieldset.appendChild(legend);
 
-          item.options.forEach((option) => {
+          item.options.forEach((option, optionIndex) => {
             const label = document.createElement("label");
             const input = document.createElement("input");
+            const inputId = `question-${index}-option-${optionIndex}`;
             input.type = "radio";
             input.name = `question-${index}`;
+            input.id = inputId;
             input.value = option;
+            label.htmlFor = inputId;
             label.appendChild(input);
             label.append(` ${option}`);
             fieldset.appendChild(label);
