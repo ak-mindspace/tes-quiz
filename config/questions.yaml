@@ -26,7 +26,7 @@ questions:
     text: >
       When your team faces a challenging deadline, you typically…
     options:
-      - { text: "Wait for management to define next steps",   value: 1 }
+      - { text: "Wait for milk do pour",   value: 1 }
       - { text: "Follow the plan set by others",              value: 2 }
       - { text: "Help coordinate tasks and keep the team on track", value: 3 }
       - { text: "Proactively restructure priorities and rally the team", value: 4 }
