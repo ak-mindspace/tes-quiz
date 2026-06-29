@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Quiz</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 2rem 1rem;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin-top: 0;
+      }
+      fieldset {
+        margin: 1rem 0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+      }
+      label {
+        display: block;
+        margin: 0.4rem 0;
+      }
+      button {
+        margin-right: 0.5rem;
+        padding: 0.5rem 0.75rem;
+      }
+      #result {
+        margin-top: 1rem;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Simple Quiz</h1>
+      <p>Answer the 3 random multiple-choice questions below.</p>
+      <form id="quiz-form" aria-live="polite"></form>
+      <button id="submit-btn" type="button">Submit</button>
+      <button id="new-quiz-btn" type="button">New Random Quiz</button>
+      <p id="result"></p>
+    </main>
+
+    <script>
+      const QUESTION_BANK = [
+        {
+          question: "What does HTML stand for?",
+          options: [
+            "HyperText Markup Language",
+            "HighText Machine Language",
+            "Hyperlink and Text Markup Language",
+            "Home Tool Markup Language",
+          ],
+          answer: "HyperText Markup Language",
+        },
+        {
+          question: "Which language is used to style web pages?",
+          options: ["CSS", "Python", "SQL", "C"],
+          answer: "CSS",
+        },
+        {
+          question: "Which language runs in a web browser?",
+          options: ["JavaScript", "C++", "Java", "Rust"],
+          answer: "JavaScript",
+        },
+        {
+          question: "What does CPU stand for?",
+          options: [
+            "Central Processing Unit",
+            "Computer Personal Unit",
+            "Central Program Utility",
+            "Core Processing Utility",
+          ],
+          answer: "Central Processing Unit",
+        },
+        {
+          question: "Which planet is known as the Red Planet?",
+          options: ["Mars", "Venus", "Jupiter", "Mercury"],
+          answer: "Mars",
+        },
+        {
+          question: "How many days are there in a leap year?",
+          options: ["366", "365", "364", "367"],
+          answer: "366",
+        },
+      ];
+
+      const QUIZ_SIZE = 3;
+      let currentQuestions = [];
+
+      function shuffle(list) {
+        const clone = [...list];
+        for (let i = clone.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [clone[i], clone[j]] = [clone[j], clone[i]];
+        }
+        return clone;
+      }
+
+      function pickRandomQuestions() {
+        return shuffle(QUESTION_BANK).slice(0, QUIZ_SIZE).map((q) => ({
+          ...q,
+          options: shuffle(q.options),
+        }));
+      }
+
+      function renderQuiz() {
+        const quizForm = document.getElementById("quiz-form");
+        const result = document.getElementById("result");
+
+        currentQuestions = pickRandomQuestions();
+        quizForm.innerHTML = "";
+        result.textContent = "";
+
+        currentQuestions.forEach((item, index) => {
+          const fieldset = document.createElement("fieldset");
+          const legend = document.createElement("legend");
+          legend.textContent = `${index + 1}. ${item.question}`;
+          fieldset.appendChild(legend);
+
+          item.options.forEach((option) => {
+            const label = document.createElement("label");
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = `question-${index}`;
+            input.value = option;
+            label.appendChild(input);
+            label.append(` ${option}`);
+            fieldset.appendChild(label);
+          });
+
+          quizForm.appendChild(fieldset);
+        });
+      }
+
+      function scoreQuiz() {
+        let score = 0;
+
+        currentQuestions.forEach((question, index) => {
+          const selected = document.querySelector(
+            `input[name="question-${index}"]:checked`,
+          );
+          if (selected && selected.value === question.answer) {
+            score += 1;
+          }
+        });
+
+        document.getElementById(
+          "result",
+        ).textContent = `You scored ${score}/${currentQuestions.length}.`;
+      }
+
+      document
+        .getElementById("submit-btn")
+        .addEventListener("click", scoreQuiz);
+      document.getElementById("new-quiz-btn").addEventListener("click", renderQuiz);
+
+      renderQuiz();
+    </script>
+  </body>
+</html>
