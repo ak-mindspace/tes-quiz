@@ -119,4 +119,5 @@ Level label keywords control the colour displayed in the UI and PDF:
 | [js-yaml](https://github.com/nodeca/js-yaml) | 4.1.0 | Parse YAML config files |
 | [jsPDF](https://github.com/parallax/jsPDF) | 2.5.1 | Generate the PDF report |
 
-Both are loaded from Cloudflare CDN with SRI integrity hashes.
+Both are loaded from the Cloudflare CDN. The `<script>` tags in `index.html` include
+`integrity` (SHA-512 SRI) hashes so browsers verify the files have not been tampered with.
