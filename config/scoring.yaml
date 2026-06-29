@@ -1,0 +1,111 @@
+# -----------------------------------------------------------------------
+# config/scoring.yaml
+#
+# Define the scoring verticals and how scores are interpreted.
+#
+# Schema per vertical:
+#   id        – must match the `vertical` field used in questions.yaml
+#   name      – human-readable label shown in the results UI and PDF
+#   max_score – maximum possible score for this vertical
+#               (= number of questions × highest option value)
+#   levels    – list of score ranges, from lowest to highest:
+#                 min         – inclusive lower bound
+#                 max         – inclusive upper bound
+#                 label       – short level name (e.g. "Developing")
+#                 description – feedback text shown to the user
+#
+# The CSS and PDF colouring is driven by keywords in the label:
+#   Red    → begin | develop | emerg | basic | found
+#   Orange → (anything else, default mid)
+#   Green  → profic | advanc | expert | master | excel
+# -----------------------------------------------------------------------
+
+verticals:
+
+  - id: leadership
+    name: "Leadership"
+    max_score: 16    # 4 questions × max value 4
+
+    levels:
+      - min: 4
+        max: 7
+        label: "Developing"
+        description: >
+          You are beginning to build your leadership toolkit. Focus on
+          proactive communication, taking small ownership moments, and
+          observing how effective leaders handle challenges.
+
+      - min: 8
+        max: 11
+        label: "Competent"
+        description: >
+          You demonstrate solid leadership behaviours in many situations.
+          Continue refining your decision-making under pressure and your
+          ability to develop others around you.
+
+      - min: 12
+        max: 16
+        label: "Proficient"
+        description: >
+          You show strong, consistent leadership. You inspire confidence,
+          navigate complexity well, and actively develop the people around
+          you. Keep raising the bar and sharing your approach.
+
+  - id: technical
+    name: "Technical Skills"
+    max_score: 16    # 4 questions × max value 4
+
+    levels:
+      - min: 4
+        max: 7
+        label: "Foundational"
+        description: >
+          You have core technical awareness but rely heavily on others for
+          complex work. Invest in structured learning and hands-on practice
+          to broaden your skill set.
+
+      - min: 8
+        max: 11
+        label: "Competent"
+        description: >
+          You handle most technical challenges independently. Deepen your
+          knowledge of software quality practices, estimation techniques,
+          and architectural thinking to reach the next level.
+
+      - min: 12
+        max: 16
+        label: "Advanced"
+        description: >
+          You consistently deliver high-quality technical work and elevate
+          those around you. Focus on knowledge sharing, mentoring, and
+          staying current with emerging best practices.
+
+  - id: communication
+    name: "Communication"
+    max_score: 16    # 4 questions × max value 4
+
+    levels:
+      - min: 4
+        max: 7
+        label: "Emerging"
+        description: >
+          Your communication is still developing. Practice active listening,
+          structure your written and verbal messages clearly, and seek
+          feedback regularly to accelerate your growth.
+
+      - min: 8
+        max: 11
+        label: "Competent"
+        description: >
+          You communicate clearly in most contexts. Work on adapting your
+          style to different audiences, embracing feedback more openly, and
+          increasing the proactivity of your stakeholder updates.
+
+      - min: 12
+        max: 16
+        label: "Excellent"
+        description: >
+          You are an outstanding communicator. You tailor your message,
+          listen actively, give and receive feedback constructively, and
+          keep all stakeholders well informed. Continue to model this for
+          your peers.

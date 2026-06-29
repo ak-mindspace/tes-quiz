@@ -1,0 +1,28 @@
+# -----------------------------------------------------------------------
+# config/config.yaml
+#
+# Edit this file to customise the page title, labels, and footer text.
+# -----------------------------------------------------------------------
+
+title: "Professional Skills Assessment"
+
+subtitle: "Discover Your Strengths"
+
+description: >
+  This assessment evaluates your capabilities across key professional
+  dimensions. Answer each question honestly to receive a personalised
+  evaluation report you can download as a PDF.
+
+# Label on the "start" button shown on the welcome screen
+welcome_button: "Begin Assessment"
+
+# Heading shown on the results screen
+results_title: "Your Assessment Results"
+
+# Label on the "download PDF" button on the results screen
+pdf_button: "📄 Download PDF Report"
+
+# Optional footer text shown at the bottom of the results page and PDF
+footer: >
+  Thank you for completing this assessment.
+  Results are for professional development purposes only.
