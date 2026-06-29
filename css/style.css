@@ -1,0 +1,473 @@
+/* =====================================================================
+   TES Quiz — Stylesheet
+   ===================================================================== */
+
+/* ---- Variables & Reset ---- */
+:root {
+    --primary:        #667eea;
+    --primary-dark:   #5a6fd6;
+    --success:        #27ae60;
+    --success-dark:   #219a52;
+    --text-primary:   #2c3e50;
+    --text-secondary: #7f8c8d;
+    --border-color:   #e8ecef;
+    --card-bg:        #ffffff;
+    --bg-start:       #667eea;
+    --bg-end:         #764ba2;
+    --shadow:         0 10px 40px rgba(0, 0, 0, 0.18);
+    --radius:         16px;
+    --transition:     all 0.25s ease;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* ---- App wrapper ---- */
+#app {
+    width: 100%;
+    max-width: 680px;
+}
+
+.screen { width: 100%; }
+
+.hidden { display: none !important; }
+
+/* ---- Loading ---- */
+#loading {
+    text-align: center;
+    color: white;
+    padding: 40px;
+}
+
+#loading p { font-size: 1.1rem; margin-top: 16px; }
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---- Error ---- */
+.error-message {
+    color: white;
+    text-align: center;
+}
+
+.error-message h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.error-message p  { opacity: 0.9; margin-bottom: 4px; }
+
+/* ---- Card ---- */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    animation: fadeSlideIn 0.35s ease both;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0);     }
+}
+
+/* =====================================================================
+   Welcome Screen
+   ===================================================================== */
+.welcome-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.app-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1.2;
+    margin-bottom: 6px;
+}
+
+.app-subtitle {
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.app-description {
+    color: var(--text-secondary);
+    font-size: 0.97rem;
+    line-height: 1.75;
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.optional {
+    font-weight: 400;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text-primary);
+    outline: none;
+    transition: var(--transition);
+}
+
+.form-group input[type="text"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+/* =====================================================================
+   Buttons
+   ===================================================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    outline: none;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.45);
+}
+
+.btn-secondary {
+    background: #f0f2f5;
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: #e2e6ea;
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+    background: var(--success-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(39, 174, 96, 0.45);
+}
+
+.btn-full {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 1.05rem;
+}
+
+/* =====================================================================
+   Quiz Screen
+   ===================================================================== */
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+}
+
+.question-counter {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.progress-pct {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.progress-track {
+    width: 100%;
+    height: 8px;
+    background: #f0f2f5;
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #764ba2);
+    border-radius: 100px;
+    transition: width 0.5s ease;
+}
+
+.question-text {
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.55;
+    margin-bottom: 22px;
+}
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    width: 100%;
+    transition: var(--transition);
+}
+
+.option-btn:hover {
+    border-color: var(--primary);
+    background: rgba(102, 126, 234, 0.05);
+    transform: translateX(4px);
+}
+
+.option-btn.selected {
+    border-color: var(--primary);
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.option-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #f0f2f5;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.option-btn.selected .option-letter {
+    background: var(--primary);
+    color: white;
+}
+
+.option-text { flex: 1; }
+
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+/* =====================================================================
+   Results Screen
+   ===================================================================== */
+.results-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.results-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.candidate-name {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.assessment-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.verticals-container {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.vertical-card {
+    padding: 18px 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.vertical-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 8px;
+}
+
+.vertical-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.level-badge {
+    padding: 3px 11px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+/* Level colour tokens */
+.level-low  { background: rgba(231, 76, 60, 0.15);  color: #c0392b; }
+.level-mid  { background: rgba(243, 156, 18, 0.15); color: #d48900; }
+.level-high { background: rgba(39, 174, 96, 0.15);  color: #1e8449; }
+
+.score-track {
+    width: 100%;
+    height: 10px;
+    background: #e8ecef;
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.score-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 1s ease;
+}
+
+.score-fill.level-low  { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+.score-fill.level-mid  { background: linear-gradient(90deg, #f39c12, #d48900); }
+.score-fill.level-high { background: linear-gradient(90deg, #27ae60, #1e8449); }
+
+.score-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.level-description {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-style: italic;
+}
+
+.results-footer {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.results-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* =====================================================================
+   Responsive
+   ===================================================================== */
+@media (max-width: 480px) {
+    .card { padding: 24px 18px; }
+
+    .app-title { font-size: 1.55rem; }
+
+    .results-actions {
+        flex-direction: column;
+    }
+
+    .results-actions .btn {
+        width: 100%;
+    }
+
+    .vertical-header {
+        flex-wrap: wrap;
+    }
+}

@@ -1,0 +1,146 @@
+# -----------------------------------------------------------------------
+# config/questions.yaml
+#
+# Define every quiz question here.
+#
+# Schema per question:
+#   id       – unique string identifier (used internally to store answers)
+#   text     – the question shown to the user
+#   vertical – must match an id defined in scoring.yaml
+#   options  – list of answer choices; each has:
+#                text  – label shown to the user
+#                value – numeric score added to the vertical total
+#
+# Tips:
+#   • Keep option values consistent across questions within a vertical
+#     (e.g. always 1–4) so that the max_score in scoring.yaml is accurate.
+#   • The order of options shown to the user matches the order listed here.
+# -----------------------------------------------------------------------
+
+questions:
+
+  # ── Leadership ──────────────────────────────────────────────────────────
+
+  - id: l1
+    vertical: leadership
+    text: >
+      When your team faces a challenging deadline, you typically…
+    options:
+      - { text: "Wait for management to define next steps",   value: 1 }
+      - { text: "Follow the plan set by others",              value: 2 }
+      - { text: "Help coordinate tasks and keep the team on track", value: 3 }
+      - { text: "Proactively restructure priorities and rally the team", value: 4 }
+
+  - id: l2
+    vertical: leadership
+    text: >
+      When a conflict arises within your team, you…
+    options:
+      - { text: "Avoid the situation and hope it resolves itself", value: 1 }
+      - { text: "Report it to a manager immediately",              value: 2 }
+      - { text: "Facilitate a conversation between the parties",   value: 3 }
+      - { text: "Address it early, mediate, and turn it into a learning moment", value: 4 }
+
+  - id: l3
+    vertical: leadership
+    text: >
+      When making an important decision with incomplete information, you…
+    options:
+      - { text: "Postpone until you have all the facts",            value: 1 }
+      - { text: "Rely on gut feeling only",                         value: 2 }
+      - { text: "Consult colleagues and make a reasoned call",      value: 3 }
+      - { text: "Apply a structured framework, gather key data points quickly, and decide", value: 4 }
+
+  - id: l4
+    vertical: leadership
+    text: >
+      How do you support a team member who is under-performing?
+    options:
+      - { text: "Ignore it and focus on your own work",                     value: 1 }
+      - { text: "Report the issue to their manager",                        value: 2 }
+      - { text: "Offer assistance and share useful resources",              value: 3 }
+      - { text: "Have a candid conversation, identify root causes, and create an action plan", value: 4 }
+
+  # ── Technical Skills ────────────────────────────────────────────────────
+
+  - id: t1
+    vertical: technical
+    text: >
+      How do you approach learning a new technology required for a project?
+    options:
+      - { text: "Avoid it and stick to familiar tools",                       value: 1 }
+      - { text: "Read the documentation briefly and try things out",          value: 2 }
+      - { text: "Study documentation, work through tutorials, and build a prototype", value: 3 }
+      - { text: "Deep-dive into official resources, explore best practices, and share learnings with the team", value: 4 }
+
+  - id: t2
+    vertical: technical
+    text: >
+      When you encounter a complex technical problem, you…
+    options:
+      - { text: "Ask someone to solve it for you",                           value: 1 }
+      - { text: "Google for a quick copy-paste solution",                    value: 2 }
+      - { text: "Break the problem down, research systematically, and test solutions", value: 3 }
+      - { text: "Decompose the problem, consider trade-offs, prototype, and document the solution", value: 4 }
+
+  - id: t3
+    vertical: technical
+    text: >
+      How do you ensure the quality and reliability of your work?
+    options:
+      - { text: "Deliver and fix issues if they are reported",           value: 1 }
+      - { text: "Do a quick manual check before delivery",               value: 2 }
+      - { text: "Review your work against requirements and test key scenarios", value: 3 }
+      - { text: "Apply automated tests, code review, and continuous integration practices", value: 4 }
+
+  - id: t4
+    vertical: technical
+    text: >
+      When estimating the effort for a technical task, you…
+    options:
+      - { text: "Provide a number off the top of your head",                  value: 1 }
+      - { text: "Give a rough range without analysis",                        value: 2 }
+      - { text: "Break it into sub-tasks and estimate each one",              value: 3 }
+      - { text: "Decompose thoroughly, identify risks, add buffers, and communicate assumptions", value: 4 }
+
+  # ── Communication ───────────────────────────────────────────────────────
+
+  - id: c1
+    vertical: communication
+    text: >
+      When presenting a complex idea to a non-technical audience, you…
+    options:
+      - { text: "Use technical jargon as it is more precise",               value: 1 }
+      - { text: "Simplify slightly but keep most of the detail",            value: 2 }
+      - { text: "Use analogies and clear examples to make it accessible",   value: 3 }
+      - { text: "Tailor the narrative to the audience, use visuals, and check understanding", value: 4 }
+
+  - id: c2
+    vertical: communication
+    text: >
+      When you receive critical feedback on your work, you…
+    options:
+      - { text: "Ignore it or become defensive",                        value: 1 }
+      - { text: "Accept it reluctantly without acting on it",           value: 2 }
+      - { text: "Thank the reviewer and work on the key points",        value: 3 }
+      - { text: "Welcome it, ask clarifying questions, and systematically improve", value: 4 }
+
+  - id: c3
+    vertical: communication
+    text: >
+      How do you keep stakeholders informed about progress and blockers?
+    options:
+      - { text: "Only when asked directly",                                 value: 1 }
+      - { text: "Share updates at the end of major milestones",            value: 2 }
+      - { text: "Provide regular status updates proactively",              value: 3 }
+      - { text: "Maintain transparent communication with tailored updates for each audience", value: 4 }
+
+  - id: c4
+    vertical: communication
+    text: >
+      When writing documentation or reports, you…
+    options:
+      - { text: "Write as little as possible",                             value: 1 }
+      - { text: "Write something but rarely revisit or update it",         value: 2 }
+      - { text: "Write clearly with a logical structure and review it",    value: 3 }
+      - { text: "Write concisely, use headers/examples, keep it updated, and seek peer review", value: 4 }
