@@ -73,7 +73,8 @@ async function loadData() {
 function applyConfig() {
     document.title = appConfig.title || 'Assessment Quiz';
 
-    document.getElementById('welcome-screen').innerHTML = `
+    const screen = document.getElementById('welcome-screen');
+    screen.innerHTML = `
         <div class="card">
             <div class="welcome-header">
                 <h1 class="app-title">${escHtml(appConfig.title || 'Assessment Quiz')}</h1>
@@ -90,13 +91,17 @@ function applyConfig() {
                 </label>
                 <input type="text" id="user-name"
                        placeholder="Enter your name"
-                       autocomplete="name"
-                       onkeydown="if(event.key==='Enter') startQuiz()">
+                       autocomplete="name">
             </div>
-            <button class="btn btn-primary btn-full" onclick="startQuiz()">
+            <button class="btn btn-primary btn-full btn-start">
                 ${escHtml(appConfig.welcome_button || 'Start Assessment')}
             </button>
         </div>`;
+
+    screen.querySelector('.btn-start').addEventListener('click', startQuiz);
+    screen.querySelector('#user-name').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') startQuiz();
+    });
 }
 
 // ---------------------------------------------------------------------------
@@ -126,7 +131,8 @@ function renderQuestion(idx) {
     const selected = answers[q.id];
     const isLast   = idx === questions.length - 1;
 
-    document.getElementById('quiz-screen').innerHTML = `
+    const screen = document.getElementById('quiz-screen');
+    screen.innerHTML = `
         <div class="card">
             <div class="progress-header">
                 <span class="question-counter">Question ${idx + 1} of ${questions.length}</span>
@@ -141,7 +147,7 @@ function renderQuestion(idx) {
             <div class="options-list">
                 ${q.options.map((opt, i) => `
                     <button class="option-btn${selected === opt.value ? ' selected' : ''}"
-                            onclick="selectOption('${escAttr(String(q.id))}', ${Number(opt.value)}, this)"
+                            data-qid="${escHtml(String(q.id))}"
                             data-value="${Number(opt.value)}">
                         <span class="option-letter">${String.fromCharCode(65 + i)}</span>
                         <span class="option-text">${escHtml(opt.text)}</span>
@@ -149,27 +155,38 @@ function renderQuestion(idx) {
             </div>
 
             <div class="nav-buttons">
-                <button class="btn btn-secondary"
-                        onclick="prevQuestion()"
+                <button class="btn btn-secondary" id="prev-btn"
                         ${idx === 0 ? 'disabled' : ''}>
                     ← Previous
                 </button>
                 ${isLast
                     ? `<button class="btn btn-success" id="action-btn"
-                               onclick="finishQuiz()"
                                ${selected === undefined ? 'disabled' : ''}>
                            View Results ✓
                        </button>`
                     : `<button class="btn btn-primary" id="action-btn"
-                               onclick="nextQuestion()"
                                ${selected === undefined ? 'disabled' : ''}>
                            Next →
                        </button>`}
             </div>
         </div>`;
+
+    // Attach event listeners — no inline handlers in HTML
+    screen.querySelector('.options-list').addEventListener('click', (e) => {
+        const btn = e.target.closest('.option-btn');
+        if (!btn) return;
+        handleOptionSelect(btn.dataset.qid, Number(btn.dataset.value), btn);
+    });
+
+    screen.querySelector('#prev-btn').addEventListener('click', prevQuestion);
+
+    const actionBtn = screen.querySelector('#action-btn');
+    if (actionBtn) {
+        actionBtn.addEventListener('click', isLast ? finishQuiz : nextQuestion);
+    }
 }
 
-function selectOption(questionId, value, clickedBtn) {
+function handleOptionSelect(questionId, value, clickedBtn) {
     answers[questionId] = value;
 
     clickedBtn.closest('.options-list')
@@ -224,12 +241,22 @@ function calcScores() {
     return scores;
 }
 
+/**
+ * Return the matching level for a score within a vertical.
+ * If the score falls below the lowest level's min, the first level is returned.
+ * If it exceeds the highest level's max, the last level is returned.
+ */
 function getLevel(vertical, score) {
     const levels = vertical.levels || [];
+    if (levels.length === 0) return { label: 'N/A', description: '' };
+
     for (const lv of levels) {
         if (score >= lv.min && score <= lv.max) return lv;
     }
-    return levels[levels.length - 1] || { label: 'N/A', description: '' };
+
+    // Score is outside all defined ranges — clamp to nearest boundary
+    if (score < levels[0].min) return levels[0];
+    return levels[levels.length - 1];
 }
 
 function levelClass(label) {
@@ -244,11 +271,11 @@ function levelClass(label) {
 // ---------------------------------------------------------------------------
 function renderResults(scores) {
     const vertHTML = verticals.map(v => {
-        const score   = scores[v.id] || 0;
-        const max     = v.max_score  || 1;
-        const lv      = getLevel(v, score);
-        const pct     = Math.min(Math.round((score / max) * 100), 100);
-        const cls     = levelClass(lv.label);
+        const score = scores[v.id] || 0;
+        const max   = v.max_score  || 1;
+        const lv    = getLevel(v, score);
+        const pct   = Math.min(Math.round((score / max) * 100), 100);
+        const cls   = levelClass(lv.label);
 
         return `
             <div class="vertical-card">
@@ -272,7 +299,8 @@ function renderResults(scores) {
     const dateStr = new Date().toLocaleDateString('en-US',
         { year: 'numeric', month: 'long', day: 'numeric' });
 
-    document.getElementById('results-screen').innerHTML = `
+    const screen = document.getElementById('results-screen');
+    screen.innerHTML = `
         <div class="card">
             <div class="results-header">
                 <h1>${escHtml(appConfig.results_title || 'Your Results')}</h1>
@@ -291,67 +319,72 @@ function renderResults(scores) {
                 : ''}
 
             <div class="results-actions">
-                <button class="btn btn-secondary" onclick="restartQuiz()">
-                    ↺ Retake
-                </button>
-                <button class="btn btn-primary" onclick="generatePDF()">
+                <button class="btn btn-secondary btn-restart">↺ Retake</button>
+                <button class="btn btn-primary btn-pdf">
                     ${escHtml(appConfig.pdf_button || '📄 Download PDF Report')}
                 </button>
             </div>
         </div>`;
+
+    // Attach event listeners — no inline handlers in HTML
+    screen.querySelector('.btn-restart').addEventListener('click', restartQuiz);
+    screen.querySelector('.btn-pdf').addEventListener('click', generatePDF);
 }
 
 // ---------------------------------------------------------------------------
 // PDF generation
 // ---------------------------------------------------------------------------
 function generatePDF() {
-    const scores    = calcScores();
-    const doc       = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const PW        = doc.internal.pageSize.getWidth();
-    const PH        = doc.internal.pageSize.getHeight();
-    const M         = 20;   // margin
-    const CW        = PW - M * 2;
-    let   y         = 0;
+    const MIN_SPACE_FOR_VERTICAL = 55; // mm required below current y before adding a page
 
-    // ── Header band ────────────────────────────────────────────────────────
+    const scores = calcScores();
+    const doc    = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    const pageWidth    = doc.internal.pageSize.getWidth();
+    const pageHeight   = doc.internal.pageSize.getHeight();
+    const margin       = 20;
+    const contentWidth = pageWidth - margin * 2;
+    let   y            = 0;
+
+    // ── Header band ─────────────────────────────────────────────────────────
     doc.setFillColor(102, 126, 234);
-    doc.rect(0, 0, PW, 46, 'F');
+    doc.rect(0, 0, pageWidth, 46, 'F');
 
     doc.setTextColor(255, 255, 255);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(22);
-    doc.text(appConfig.title || 'Assessment Results', PW / 2, 18, { align: 'center' });
+    doc.text(appConfig.title || 'Assessment Results', pageWidth / 2, 18, { align: 'center' });
 
     if (appConfig.subtitle) {
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(11);
-        doc.text(appConfig.subtitle, PW / 2, 28, { align: 'center' });
+        doc.text(appConfig.subtitle, pageWidth / 2, 28, { align: 'center' });
     }
 
     doc.setFontSize(9);
     const dateStr = new Date().toLocaleDateString('en-US',
         { year: 'numeric', month: 'long', day: 'numeric' });
-    doc.text(`Generated: ${dateStr}`, PW / 2, 40, { align: 'center' });
+    doc.text(`Generated: ${dateStr}`, pageWidth / 2, 40, { align: 'center' });
 
     y = 56;
 
-    // ── Candidate name ──────────────────────────────────────────────────────
+    // ── Candidate name ───────────────────────────────────────────────────────
     if (userName) {
         doc.setTextColor(50, 50, 50);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(13);
-        doc.text(`Candidate: ${userName}`, M, y);
+        doc.text(`Candidate: ${userName}`, margin, y);
         y += 10;
     }
 
     doc.setDrawColor(210, 210, 210);
     doc.setLineWidth(0.4);
-    doc.line(M, y, PW - M, y);
+    doc.line(margin, y, pageWidth - margin, y);
     y += 9;
 
-    // ── Vertical results ────────────────────────────────────────────────────
+    // ── Vertical results ─────────────────────────────────────────────────────
     verticals.forEach((v, idx) => {
-        if (y > PH - 55) { doc.addPage(); y = M; }
+        if (y > pageHeight - MIN_SPACE_FOR_VERTICAL) { doc.addPage(); y = margin; }
 
         const score = scores[v.id] || 0;
         const max   = v.max_score  || 1;
@@ -363,14 +396,14 @@ function generatePDF() {
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(13);
         doc.setTextColor(40, 40, 40);
-        doc.text(v.name, M, y);
+        doc.text(v.name, margin, y);
         y += 7;
 
         // Score line
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(10);
         doc.setTextColor(80, 80, 80);
-        doc.text(`Score: ${score} / ${max} pts  (${pct}%)`, M, y);
+        doc.text(`Score: ${score} / ${max} pts  (${pct}%)`, margin, y);
         y += 6;
 
         // Level pill
@@ -378,18 +411,18 @@ function generatePDF() {
         doc.setTextColor(255, 255, 255);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
-        const pillTxt = `Level: ${lv.label}`;
-        const pillW   = doc.getTextWidth(pillTxt) + 8;
-        doc.roundedRect(M, y - 4, pillW, 7, 2, 2, 'F');
-        doc.text(pillTxt, M + 4, y + 1);
+        const pillTxt  = `Level: ${lv.label}`;
+        const pillWidth = doc.getTextWidth(pillTxt) + 8;
+        doc.roundedRect(margin, y - 4, pillWidth, 7, 2, 2, 'F');
+        doc.text(pillTxt, margin + 4, y + 1);
         y += 11;
 
         // Progress bar (background + fill)
         doc.setFillColor(225, 225, 225);
-        doc.roundedRect(M, y, CW, 6, 2, 2, 'F');
+        doc.roundedRect(margin, y, contentWidth, 6, 2, 2, 'F');
         if (pct > 0) {
             doc.setFillColor(...color);
-            doc.roundedRect(M, y, CW * (pct / 100), 6, 2, 2, 'F');
+            doc.roundedRect(margin, y, contentWidth * (pct / 100), 6, 2, 2, 'F');
         }
         y += 12;
 
@@ -398,31 +431,31 @@ function generatePDF() {
             doc.setFont('helvetica', 'italic');
             doc.setFontSize(9);
             doc.setTextColor(90, 90, 90);
-            const lines = doc.splitTextToSize(lv.description, CW);
-            doc.text(lines, M, y);
+            const lines = doc.splitTextToSize(lv.description, contentWidth);
+            doc.text(lines, margin, y);
             y += lines.length * 5 + 3;
         }
 
         // Divider between verticals
         if (idx < verticals.length - 1) {
             doc.setDrawColor(225, 225, 225);
-            doc.line(M, y, PW - M, y);
+            doc.line(margin, y, pageWidth - margin, y);
             y += 8;
         }
     });
 
-    // ── Footer ──────────────────────────────────────────────────────────────
+    // ── Footer ───────────────────────────────────────────────────────────────
     if (appConfig.footer) {
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(8);
         doc.setTextColor(150, 150, 150);
-        doc.text(appConfig.footer, PW / 2, PH - 12, { align: 'center' });
+        doc.text(appConfig.footer, pageWidth / 2, pageHeight - 12, { align: 'center' });
     }
 
     // Page border
     doc.setDrawColor(102, 126, 234);
     doc.setLineWidth(0.8);
-    doc.rect(4, 4, PW - 8, PH - 8);
+    doc.rect(4, 4, pageWidth - 8, pageHeight - 8);
 
     // Save
     const safe = userName
@@ -434,9 +467,9 @@ function generatePDF() {
 /** Return [r, g, b] based on level label keywords */
 function levelRgb(label) {
     const l = (label || '').toLowerCase();
-    if (/begin|develop|emerg|basic|found/.test(l))  return [192, 57, 43];   // red
-    if (/profic|advanc|expert|master|excel/.test(l)) return [30, 132, 73];  // green
-    return [211, 84, 0]; // orange (mid/default)
+    if (/begin|develop|emerg|basic|found/.test(l))  return [192, 57, 43];  // red
+    if (/profic|advanc|expert|master|excel/.test(l)) return [30, 132, 73]; // green
+    return [211, 84, 0]; // orange (mid / default)
 }
 
 // ---------------------------------------------------------------------------
@@ -450,8 +483,4 @@ function escHtml(str) {
         .replace(/>/g,  '&gt;')
         .replace(/"/g,  '&quot;')
         .replace(/'/g,  '&#39;');
-}
-
-function escAttr(str) {
-    return escHtml(str).replace(/`/g, '&#96;');
 }

@@ -397,7 +397,7 @@ body {
     flex-shrink: 0;
 }
 
-/* Level colour tokens */
+/* Level color tokens */
 .level-low  { background: rgba(231, 76, 60, 0.15);  color: #c0392b; }
 .level-mid  { background: rgba(243, 156, 18, 0.15); color: #d48900; }
 .level-high { background: rgba(39, 174, 96, 0.15);  color: #1e8449; }
